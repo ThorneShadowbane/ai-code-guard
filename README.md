@@ -161,7 +161,7 @@ jobs:
 ```yaml
 # .pre-commit-config.yaml
 repos:
-  - repo: https://github.com/AnjaliGNair/ai-code-guard
+  - repo: https://ThorneShadowbane/ai-code-guard
     rev: v0.1.0
     hooks:
       - id: ai-code-guard
@@ -205,7 +205,7 @@ class MyCustomPattern(BasePattern):
 
 This tool implements patterns identified in research on AI coding assistant security vulnerabilities. Key references:
 
-- [AI Security Vulnerability Assessment Framework](https://zenodo.org/records/YOUR_DOI) — Research on prompt injection and data exfiltration risks in AI coding assistants
+- [AI Security Vulnerability Assessment Framework]([https://zenodo.org/records/YOUR_DOI](https://zenodo.org/records/17924763)) — Research on prompt injection and data exfiltration risks in AI coding assistants
 
 ## 📄 License
 
