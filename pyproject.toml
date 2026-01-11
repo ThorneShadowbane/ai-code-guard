@@ -55,10 +55,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/AnjaliGNair/ai-code-guard"
-Documentation = "https://github.com/AnjaliGNair/ai-code-guard#readme"
-Repository = "https://github.com/AnjaliGNair/ai-code-guard"
-Issues = "https://github.com/AnjaliGNair/ai-code-guard/issues"
+Homepage = "https://github.com/ThorneShadowbane/ai-code-guard"
+Documentation = "https://github.com/ThorneShadowbane/ai-code-guard#readme"
+Repository = "https://github.com/ThorneShadowbane/ai-code-guard"
+Issues = "https://github.com/ThorneShadowbane/ai-code-guard/issues"
 
 [project.scripts]
 ai-code-guard = "ai_code_guard.cli:main"
