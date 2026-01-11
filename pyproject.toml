@@ -1,0 +1,88 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-code-guard"
+version = "0.1.0"
+description = "Detect security vulnerabilities in AI-generated code"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+authors = [
+    {name = "Anjali Gopinadhan Nair", email = "your.email@example.com"}
+]
+keywords = [
+    "security",
+    "ai",
+    "code-analysis",
+    "vulnerability-detection",
+    "prompt-injection",
+    "copilot",
+    "chatgpt",
+    "claude",
+    "llm-security"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Testing",
+]
+dependencies = [
+    "click>=8.0.0",
+    "rich>=13.0.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/AnjaliGNair/ai-code-guard"
+Documentation = "https://github.com/AnjaliGNair/ai-code-guard#readme"
+Repository = "https://github.com/AnjaliGNair/ai-code-guard"
+Issues = "https://github.com/AnjaliGNair/ai-code-guard/issues"
+
+[project.scripts]
+ai-code-guard = "ai_code_guard.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ai_code_guard*"]
+
+[tool.black]
+line-length = 100
+target-version = ["py38", "py39", "py310", "py311", "py312"]
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "W", "I", "N", "B", "A", "C4", "SIM", "ARG"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --cov=ai_code_guard --cov-report=term-missing"
