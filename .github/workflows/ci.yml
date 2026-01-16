@@ -28,15 +28,15 @@ jobs:
       
       - name: Lint with ruff
         run: |
-          ruff check ai_code_guard_pro/
+          ruff check ai_code_guard/
       
       - name: Type check with mypy
         run: |
-          mypy ai_code_guard_pro/ --ignore-missing-imports
+          mypy ai_code_guard/ --ignore-missing-imports
       
       - name: Test with pytest
         run: |
-          pytest tests/ -v --cov=ai_code_guard_pro --cov-report=xml
+          pytest tests/ -v --cov=ai_code_guard --cov-report=xml
       
       - name: Upload coverage
         uses: codecov/codecov-action@v3
