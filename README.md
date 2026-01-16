@@ -1,4 +1,5 @@
 # 🛡️ AI Code Guard
+[![CI](https://github.com/ThorneShadowbane/ai-code-guard/actions/workflows/ci.yml/badge.svg)](https://github.com/ThorneShadowbane/ai-code-guard/actions/workflows/ci.yml)
 
 > Detect security vulnerabilities in AI-generated code before they reach production
 
