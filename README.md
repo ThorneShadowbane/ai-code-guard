@@ -1,6 +1,6 @@
 # 🛡️ AI Code Guard Pro
 
-[![CI](https://github.com/ai-code-guard/ai-code-guard/actions/workflows/ci.yml/badge.svg)](https://github.com/ai-code-guard/ai-code-guard/actions)
+[![CI](https://github.com/ThorneShadowbane/ai-code-guard/actions/workflows/ci.yml/badge.svg)](https://github.com/ThorneShadowbane/ai-code-guard/actions/workflows/ci.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
