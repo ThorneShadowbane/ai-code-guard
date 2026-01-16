@@ -1,15 +1,26 @@
-"""AI Code Guard - Detect security vulnerabilities in AI-generated code."""
+"""
+AI Code Guard Pro - Industry-grade security scanner for AI-generated code.
 
-__version__ = "0.1.0"
-__author__ = "Anjali Gopinadhan Nair"
+Features:
+- AST-based analysis with taint tracking
+- Entropy-based secret detection
+- Prompt injection detection for LLM applications
+- Supply chain attack detection
+- SARIF output for CI/CD integration
+"""
 
-from .scanner import Scanner, ScanConfig, ScanResult
-from .patterns import Finding, Severity
+__version__ = "1.0.0"
+
+from .models import Category, Config, Finding, Location, ScanResult, Severity
+from .scanner import Scanner, scan
 
 __all__ = [
-    "Scanner",
-    "ScanConfig", 
-    "ScanResult",
+    "Category",
+    "Config",
     "Finding",
+    "Location",
+    "ScanResult",
+    "Scanner",
     "Severity",
+    "scan",
 ]

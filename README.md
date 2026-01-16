@@ -1,137 +1,165 @@
-# 🛡️ AI Code Guard
-[![CI](https://github.com/ThorneShadowbane/ai-code-guard/actions/workflows/ci.yml/badge.svg)](https://github.com/ThorneShadowbane/ai-code-guard/actions/workflows/ci.yml)
+# 🛡️ AI Code Guard Pro
 
-> Detect security vulnerabilities in AI-generated code before they reach production
-
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![CI](https://github.com/ai-code-guard-pro/ai-code-guard-pro/actions/workflows/ci.yml/badge.svg)](https://github.com/ai-code-guard-pro/ai-code-guard-pro/actions)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Security Tool](https://img.shields.io/badge/security-tool-red.svg)]()
+[![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
 
-AI coding assistants (GitHub Copilot, Claude, ChatGPT, Cursor) are revolutionizing development — but they can introduce security vulnerabilities that slip past code review. **AI Code Guard** scans your codebase for security issues commonly found in AI-generated code.
+> **Industry-grade security scanner for AI-generated code** with AST analysis, taint tracking, and LLM-specific vulnerability detection.
+
+AI coding assistants (GitHub Copilot, Claude, ChatGPT, Cursor) are revolutionizing development—but they can introduce security vulnerabilities that slip past code review. **AI Code Guard Pro** is a next-generation security scanner specifically designed to catch these issues.
+
+## 🚀 Key Improvements Over Basic Scanners
+
+| Feature | Basic Scanners | AI Code Guard Pro |
+|---------|---------------|-------------------|
+| **Analysis Method** | Regex matching | AST parsing + taint tracking |
+| **False Positives** | High | Reduced via context awareness |
+| **Secret Detection** | Pattern only | Pattern + Shannon entropy |
+| **Prompt Injection** | ❌ Not detected | ✅ Direct + indirect detection |
+| **Supply Chain** | Basic | Typosquatting + dependency confusion |
+| **Output Formats** | Limited | Console, JSON, SARIF, Markdown |
+| **CI/CD Integration** | Basic | Native SARIF for GitHub Security |
 
 ## 🎯 What It Detects
 
-| Category | Examples |
-|----------|----------|
-| **Prompt Injection Risks** | User input in system prompts, unsafe template rendering |
-| **Hardcoded Secrets** | API keys, passwords, tokens in AI-suggested code |
-| **Insecure Code Patterns** | SQL injection, command injection, path traversal |
-| **Data Exfiltration Risks** | Suspicious outbound requests, data leakage patterns |
-| **Dependency Confusion** | Typosquatting packages, suspicious imports |
+### 🔐 Secrets & Credentials
+- **API Keys**: OpenAI, Anthropic, AWS, GCP, GitHub, Stripe, and 15+ providers
+- **Private Keys**: RSA, SSH, PGP, EC
+- **Database Credentials**: Connection strings, passwords
+- **High-Entropy Strings**: AI placeholder secrets
 
-## 🚀 Quick Start
+### 💉 Injection Vulnerabilities
+- **SQL Injection**: f-strings, .format(), concatenation in queries
+- **Command Injection**: os.system, subprocess with shell=True
+- **Code Execution**: eval(), exec() with user input
+- **SSRF**: User-controlled URLs in requests
+
+### 🤖 AI/LLM-Specific Issues
+- **Direct Prompt Injection**: User input in system prompts
+- **Indirect Injection**: RAG/retrieval injection risks
+- **Unsafe Deserialization**: pickle, yaml.load without SafeLoader
+
+### 📦 Supply Chain Attacks
+- **Typosquatting**: Similar names to popular packages
+- **Dependency Confusion**: Internal package name patterns
+- **Known Malicious Packages**: Database of suspicious packages
+
+## 📦 Installation
 
 ```bash
-# Install
-pip install ai-code-guard
+pip install ai-code-guard-pro
+```
 
+Or with development dependencies:
+
+```bash
+pip install ai-code-guard-pro[dev]
+```
+
+## 🔧 Quick Start
+
+```bash
 # Scan a directory
 ai-code-guard scan ./src
 
-# Scan a single file
-ai-code-guard scan ./src/api/chat.py
+# Scan with specific output format
+ai-code-guard scan ./src --format sarif -o results.sarif
 
-# Output as JSON
-ai-code-guard scan ./src --format json
+# Quick CI check
+ai-code-guard check ./src
+
+# List all rules
+ai-code-guard rules
+
+# Create config file
+ai-code-guard init
 ```
 
 ## 📊 Example Output
 
 ```
-$ ai-code-guard scan ./my-project
-
-🔍 AI Code Guard v0.1.0
-   Scanning 47 files...
+🛡️  AI Code Guard Pro v1.0.0
+   Scanning ./my-project...
 
 ┌─────────────────────────────────────────────────────────────────────┐
-│ CRITICAL: SQL Injection Vulnerability                               │
+│ 🔴 CRITICAL: SQL Injection Vulnerability                            │
 ├─────────────────────────────────────────────────────────────────────┤
-│ File: src/db/queries.py, Line 42                                    │
+│ 📍 src/db/queries.py:42                                             │
+│                                                                     │
+│ SQL query constructed using f-string interpolation. User-controlled │
+│ data may be interpolated directly into the query, enabling SQL      │
+│ injection attacks.                                                  │
+│                                                                     │
 │ Code: query = f"SELECT * FROM users WHERE id = {user_id}"          │
 │                                                                     │
-│ AI-generated code often uses f-strings for SQL queries.            │
-│ Use parameterized queries instead.                                  │
+│ ✅ Fix: Use parameterized queries:                                  │
+│    cursor.execute('SELECT * FROM users WHERE id = ?', (user_id,))  │
 │                                                                     │
-│ ✅ Fix: cursor.execute("SELECT * FROM users WHERE id = ?", (id,))  │
+│ CWE: CWE-89                                                         │
 └─────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────┐
-│ HIGH: Prompt Injection Risk                                         │
+│ 🟠 HIGH: Prompt Injection Vulnerability                             │
 ├─────────────────────────────────────────────────────────────────────┤
-│ File: src/api/chat.py, Line 23                                      │
+│ 📍 src/api/chat.py:23                                               │
+│                                                                     │
+│ User input directly embedded in LLM prompt via f-string. Attackers  │
+│ can inject malicious instructions to manipulate the AI's behavior.  │
+│                                                                     │
 │ Code: prompt = f"You are a helper. User says: {user_input}"        │
 │                                                                     │
-│ User input directly concatenated into LLM prompt.                   │
-│ Attacker can inject malicious instructions.                         │
+│ ✅ Fix:                                                              │
+│ 1. Separate system prompts from user content using message roles    │
+│ 2. Sanitize user input (remove control characters, limit length)    │
+│ 3. Use structured output formats to detect injection attempts       │
 │                                                                     │
-│ ✅ Fix: Sanitize input and use structured prompt templates          │
+│ CWE: CWE-74 | OWASP: LLM01                                          │
 └─────────────────────────────────────────────────────────────────────┘
 
-┌─────────────────────────────────────────────────────────────────────┐
-│ HIGH: Hardcoded API Key                                             │
-├─────────────────────────────────────────────────────────────────────┤
-│ File: src/config.py, Line 15                                        │
-│ Code: api_key = "sk-proj-abc123..."                                 │
-│                                                                     │
-│ AI assistants often generate code with placeholder secrets          │
-│ that developers forget to remove.                                   │
-│                                                                     │
-│ ✅ Fix: Use environment variables: os.environ.get("API_KEY")        │
-└─────────────────────────────────────────────────────────────────────┘
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+────────────────────────────────────────────────────────────────────────
 📊 SUMMARY
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   Files scanned:  47
-   Issues found:   3
-   
-   🔴 CRITICAL:    1
-   🟠 HIGH:        2
-   🟡 MEDIUM:      0
-   🔵 LOW:         0
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+────────────────────────────────────────────────────────────────────────
+Files scanned    47
+Issues found     3
+Scan time        127ms
+
+🔴 CRITICAL: 1  🟠 HIGH: 2  🟡 MEDIUM: 0  🔵 LOW: 0
+────────────────────────────────────────────────────────────────────────
 ```
 
-## 🔧 Configuration
+## ⚙️ Configuration
 
 Create `.ai-code-guard.yaml` in your project root:
 
 ```yaml
-# Severity threshold (ignore issues below this level)
-min_severity: medium
+# Minimum severity to report
+min_severity: low  # critical, high, medium, low, info
 
 # Patterns to ignore
 ignore:
-  - "tests/*"
-  - "*.test.py"
-  - "examples/*"
+  - "tests/**"
+  - "**/test_*.py"
+  - "examples/**"
+  - "docs/**"
 
-# Specific rules to disable
-disable_rules:
-  - "SEC001"  # Hardcoded secrets (if using .env.example)
+# Rules to disable
+disable_rules: []
+  # - "SEC001"  # If using example API keys
+  # - "PRI001"  # If false positives on prompt construction
 
-# Custom secret patterns to detect
-custom_secrets:
-  - pattern: "my-company-api-.*"
-    name: "Company API Key"
+# Secret detection tuning
+entropy_threshold: 4.5  # Shannon entropy threshold
+min_secret_length: 16
+
+# AI-specific detection
+detect_placeholder_secrets: true
+detect_prompt_injection: true
+
+# Performance
+max_file_size_kb: 1024
+parallel_workers: 4
 ```
-
-## 📋 Rule Reference
-
-| Rule ID | Category | Description |
-|---------|----------|-------------|
-| **SEC001** | Secrets | Hardcoded API keys, passwords, tokens |
-| **SEC002** | Secrets | AWS/GCP/Azure credentials in code |
-| **INJ001** | Injection | SQL injection via string formatting |
-| **INJ002** | Injection | Command injection via os.system/subprocess |
-| **INJ003** | Injection | Path traversal vulnerabilities |
-| **PRI001** | Prompt Injection | User input in LLM system prompts |
-| **PRI002** | Prompt Injection | Unsafe prompt template rendering |
-| **PRI003** | Prompt Injection | Missing input sanitization for LLM |
-| **DEP001** | Dependencies | Known typosquatting packages |
-| **DEP002** | Dependencies | Suspicious import patterns |
-| **EXF001** | Data Exfiltration | Outbound requests with sensitive data |
-| **EXF002** | Data Exfiltration | Base64 encoding of sensitive variables |
 
 ## 🔌 CI/CD Integration
 
@@ -143,16 +171,23 @@ name: Security Scan
 on: [push, pull_request]
 
 jobs:
-  ai-code-guard:
+  security:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
-      - run: pip install ai-code-guard
-      - run: ai-code-guard scan ./src --format sarif > results.sarif
-      - uses: github/codeql-action/upload-sarif@v2
+          python-version: '3.11'
+      
+      - run: pip install ai-code-guard-pro
+      
+      - name: Run security scan
+        run: ai-code-guard scan . --format sarif -o results.sarif --fail-on high
+      
+      - name: Upload SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
         with:
           sarif_file: results.sarif
 ```
@@ -162,62 +197,109 @@ jobs:
 ```yaml
 # .pre-commit-config.yaml
 repos:
-  - repo: https://ThorneShadowbane/ai-code-guard
-    rev: v0.1.0
+  - repo: local
     hooks:
       - id: ai-code-guard
+        name: AI Code Guard Security Scan
+        entry: ai-code-guard check
+        language: python
+        types: [python]
+        pass_filenames: false
 ```
 
-## 🧠 Why AI-Generated Code Needs Special Attention
+### GitLab CI
 
-AI coding assistants are trained on vast amounts of code — including insecure patterns. Common issues include:
+```yaml
+security-scan:
+  image: python:3.11
+  script:
+    - pip install ai-code-guard-pro
+    - ai-code-guard scan . --format json -o gl-sast-report.json
+  artifacts:
+    reports:
+      sast: gl-sast-report.json
+```
 
-1. **Outdated Security Practices**: Training data includes old, insecure code
-2. **Placeholder Secrets**: AI generates realistic-looking API keys as examples
-3. **Prompt Injection Blindspots**: Most training data predates LLM security concerns
-4. **Context-Free Suggestions**: AI doesn't understand your security requirements
+## 📋 Rule Reference
 
-This tool specifically targets patterns commonly introduced by AI assistants.
+| Rule ID | Category | Severity | Description |
+|---------|----------|----------|-------------|
+| SEC001-015 | Secrets | CRITICAL/HIGH | API keys (OpenAI, AWS, GitHub, Stripe, etc.) |
+| SEC020-022 | Secrets | CRITICAL | Private keys (RSA, SSH, PGP) |
+| SEC030-031 | Secrets | CRITICAL | Database credentials |
+| SEC040 | Secrets | MEDIUM | JWT tokens |
+| SEC050 | Secrets | MEDIUM | AI placeholder secrets |
+| SEC099 | Secrets | MEDIUM | High-entropy strings |
+| INJ001 | Injection | CRITICAL | SQL injection |
+| INJ002 | Injection | CRITICAL | Command injection |
+| INJ003 | Injection | CRITICAL | Code execution (eval/exec) |
+| DES001 | Deserialization | CRITICAL | Unsafe YAML |
+| DES002 | Deserialization | CRITICAL | Unsafe pickle |
+| SSRF001 | SSRF | HIGH | Server-side request forgery |
+| PRI001-005 | Prompt Injection | HIGH | Direct prompt injection |
+| PRI006 | Prompt Injection | MEDIUM | User input in prompts |
+| PRI010-011 | Prompt Injection | MEDIUM | Indirect injection |
+| DEP001 | Dependencies | VARIES | Known suspicious packages |
+| DEP002 | Dependencies | HIGH | Typosquatting detection |
+| DEP003 | Dependencies | HIGH | Dependency confusion |
+
+## 🔬 Technical Details
+
+### AST-Based Analysis
+
+Unlike regex-based scanners, AI Code Guard Pro parses Python code into an Abstract Syntax Tree, enabling:
+
+- **Taint tracking**: Follow user input through variable assignments
+- **Context awareness**: Understand function calls and their arguments
+- **Reduced false positives**: Skip patterns in comments and strings
+
+### Entropy-Based Secret Detection
+
+Uses Shannon entropy to distinguish real secrets from placeholders:
+
+```python
+# High entropy (likely real secret) - DETECTED
+api_key = "sk-proj-aB3xK9mL2pQrStUvWxYz..."
+
+# Low entropy (placeholder) - IGNORED
+api_key = "your-api-key-here"
+```
+
+### LLM Security Focus
+
+Specifically targets vulnerabilities in AI/LLM applications:
+
+- Detects prompt injection in OpenAI, Anthropic, and LangChain code
+- Identifies indirect injection risks in RAG pipelines
+- Flags unsafe patterns in agent/tool implementations
 
 ## 🤝 Contributing
 
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-### Adding New Detection Patterns
+### Adding Detection Patterns
 
 ```python
-# ai_code_guard/patterns/my_pattern.py
-from ai_code_guard.patterns.base import BasePattern, Finding, Severity
+# ai_code_guard_pro/analyzers/my_analyzer.py
+from ai_code_guard_pro.models import Finding, Severity, Category
 
-class MyCustomPattern(BasePattern):
-    """Detect my custom security issue."""
-    
-    rule_id = "CUS001"
-    name = "Custom Security Issue"
-    severity = Severity.HIGH
-    
-    def scan(self, content: str, filepath: str) -> list[Finding]:
+class MyAnalyzer:
+    def analyze(self) -> list[Finding]:
         findings = []
-        # Your detection logic here
+        # Your detection logic
         return findings
 ```
 
-## 📚 Research Background
+## 📚 References
 
-This tool implements patterns identified in research on AI coding assistant security vulnerabilities. Key references:
-
-- [AI Security Vulnerability Assessment Framework]([https://zenodo.org/records/YOUR_DOI](https://zenodo.org/records/17924763)) — Research on prompt injection and data exfiltration risks in AI coding assistants
+- [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+- [CWE - Common Weakness Enumeration](https://cwe.mitre.org/)
+- [SARIF Specification](https://sarifweb.azurewebsites.net/)
 
 ## 📄 License
 
-MIT License — see [LICENSE](LICENSE) for details.
-
-## 🙏 Acknowledgments
-
-- Security patterns informed by OWASP guidelines
-- Prompt injection research from the AI security community
-- Inspired by tools like Semgrep, Bandit, and GitLeaks
+MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Built with 🛡️ by security engineers who use AI coding assistants daily**
+**Built for the AI era by security engineers who use AI coding assistants daily** 🛡️

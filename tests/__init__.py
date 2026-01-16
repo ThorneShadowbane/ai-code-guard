@@ -1,1 +1,1 @@
-"""Tests for AI Code Guard."""
+# Tests for AI Code Guard Pro
