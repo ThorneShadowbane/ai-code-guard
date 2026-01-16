@@ -1,6 +1,6 @@
 # 🛡️ AI Code Guard Pro
 
-[![CI](https://github.com/ai-code-guard-pro/ai-code-guard-pro/actions/workflows/ci.yml/badge.svg)](https://github.com/ai-code-guard-pro/ai-code-guard-pro/actions)
+[![CI](https://github.com/ai-code-guard/ai-code-guard/actions/workflows/ci.yml/badge.svg)](https://github.com/ai-code-guard/ai-code-guard/actions)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
@@ -48,13 +48,13 @@ AI coding assistants (GitHub Copilot, Claude, ChatGPT, Cursor) are revolutionizi
 ## 📦 Installation
 
 ```bash
-pip install ai-code-guard-pro
+pip install ai-code-guard
 ```
 
 Or with development dependencies:
 
 ```bash
-pip install ai-code-guard-pro[dev]
+pip install ai-code-guard[dev]
 ```
 
 ## 🔧 Quick Start
@@ -180,7 +180,7 @@ jobs:
         with:
           python-version: '3.11'
       
-      - run: pip install ai-code-guard-pro
+      - run: pip install ai-code-guard
       
       - name: Run security scan
         run: ai-code-guard scan . --format sarif -o results.sarif --fail-on high
@@ -213,7 +213,7 @@ repos:
 security-scan:
   image: python:3.11
   script:
-    - pip install ai-code-guard-pro
+    - pip install ai-code-guard
     - ai-code-guard scan . --format json -o gl-sast-report.json
   artifacts:
     reports:
